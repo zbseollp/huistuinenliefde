@@ -1,0 +1,111 @@
+---
+import { categorySections } from '../data/categories';
+---
+<section class="services section">
+  <div class="container">
+    <div class="section-header section-header--center reveal">
+      <h2>Categorieën</h2>
+      <p>VInd hier onze categorieën en laat je inspireren zodat jij je huis en tuin kan omtoveren tot jouw droom thuis.</p>
+    </div>
+
+    <div class="services__grid">
+      {categorySections.map((category, i) => (
+        <article class="services__card reveal" style={`transition-delay: ${i * 0.08}s`}>
+          <div class="services__card-image">
+            <img src={category.image} alt={category.imageAlt} width="640" height="427" loading="lazy" />
+          </div>
+          <div class="services__card-body">
+            <h3 class="services__card-title">{category.title}</h3>
+            <ul class="services__links">
+              {category.links.map((link) => (
+                <li><a href={link.href}>{link.label}</a></li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .services__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2rem);
+  }
+
+  .services__card {
+    display: grid;
+    grid-template-columns: 1fr;
+    background: var(--color-secondary);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .services__card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .services__card-image img {
+    width: 100%;
+    height: clamp(150px, 25vw, 200px);
+    object-fit: cover;
+  }
+
+  .services__card-body {
+    padding: 1.25rem 1.5rem 1.5rem;
+  }
+
+  .services__card-title {
+    font-family: var(--font-section);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+  }
+
+  .services__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+  }
+
+  .services__links a {
+    font-size: 0.875rem;
+    color: var(--color-text);
+    transition: color var(--transition);
+    line-height: 2;
+  }
+
+  .services__links a:hover {
+    color: var(--color-accent);
+  }
+
+  .services__links a:not(:last-child)::after {
+    content: ' ·';
+    color: var(--color-muted);
+    margin-left: 0.25rem;
+  }
+
+  @media (min-width: 600px) {
+    .services__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .services__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .services__card {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

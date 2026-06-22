@@ -1,0 +1,98 @@
+---
+<section class="contact section">
+  <div class="container">
+    <div class="contact__layout">
+      <div class="contact__intro reveal">
+        <h1>Contact</h1>
+        <p>Wil je contact met de redactie van Huistuinenliefde.nl of zou je een samenwerking met ons aan willen gaan?</p>
+        <p>Neem dan contact op middels onderstaand contact formulier. We streven er naar alle vragen binnen 24 uur te beantwoorden.</p>
+      </div>
+
+      <form class="contact__form reveal" name="contact" method="POST">
+        <div class="form-group">
+          <label for="name">Naam</label>
+          <input type="text" id="name" name="name" placeholder="Naam" autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Email" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="message">Bericht</label>
+          <textarea id="message" name="message" rows="4" placeholder="Bericht"></textarea>
+        </div>
+        <button type="submit" class="btn btn--primary contact__submit">Versturen</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact__layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 900px;
+    margin-inline: auto;
+  }
+
+  .contact__intro p {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+  }
+
+  .contact__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-family: var(--font-nav);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text);
+    background: var(--color-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--card-radius);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(44, 108, 58, 0.15);
+  }
+
+  .form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .contact__submit {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .contact__layout {
+      grid-template-columns: 1fr 1fr;
+      max-width: var(--container-max);
+    }
+  }
+</style>

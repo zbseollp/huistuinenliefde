@@ -1,0 +1,161 @@
+---
+import type { NavItem } from '../data/navigation';
+
+interface Props {
+  items: NavItem[];
+  currentPath: string;
+}
+
+const { items, currentPath } = Astro.props;
+
+function isActive(href: string): boolean {
+  if (href === '/') return currentPath === '/';
+  return currentPath.startsWith(href.replace(/\/$/, ''));
+}
+---
+<nav class="nav" aria-label="Hoofdnavigatie">
+  <ul class="nav__list">
+    {items.map((item) => (
+      <li class:list={['nav-item', { 'nav-item--has-children': item.children }]}>
+        <a
+          href={item.href}
+          class:list={['nav-link', { 'nav-link--active': isActive(item.href) }]}
+          aria-current={isActive(item.href) ? 'page' : undefined}
+        >
+          {item.label}
+          {item.children && (
+            <svg class="nav-link__chevron" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+          )}
+        </a>
+        {item.children && (
+          <ul class="nav-submenu">
+            {item.children.map((child) => (
+              <li>
+                <a href={child.href} class="nav-submenu__link">{child.label}</a>
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    ))}
+  </ul>
+</nav>
+
+<style>
+  .nav__list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.875rem 1rem;
+    font-family: var(--font-nav);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--color-primary);
+    transition: color var(--transition);
+  }
+
+  .nav-link:hover,
+  .nav-link--active {
+    color: var(--color-accent);
+  }
+
+  .nav-link__chevron {
+    transition: transform var(--transition);
+  }
+
+  .nav-item--expanded .nav-link__chevron {
+    transform: rotate(180deg);
+  }
+
+  .nav-submenu {
+    display: none;
+    padding: 0.5rem 0 0.5rem 1rem;
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .nav-item--expanded .nav-submenu {
+    display: block;
+  }
+
+  .nav-submenu__link {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: var(--color-text);
+    transition: color var(--transition), padding-left var(--transition);
+  }
+
+  .nav-submenu__link:hover {
+    color: var(--color-accent);
+    padding-left: 1.25rem;
+  }
+
+  @media (max-width: 1023px) {
+    .nav {
+      position: fixed;
+      top: 65px;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--color-secondary);
+      padding: 1rem;
+      transform: translateX(100%);
+      transition: transform var(--transition);
+      overflow-y: auto;
+      z-index: 99;
+    }
+
+    .nav--open {
+      transform: translateX(0);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .nav__list {
+      flex-direction: row;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .nav-link {
+      padding: 0.5rem 0.875rem;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-item--has-children:hover .nav-submenu,
+    .nav-item--has-children:focus-within .nav-submenu {
+      display: block;
+    }
+
+    .nav-submenu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 240px;
+      padding: 0.75rem 0;
+      background: var(--color-secondary);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-md);
+      z-index: 50;
+    }
+
+    .nav-item--expanded .nav-submenu {
+      display: none;
+    }
+
+    .nav-item--has-children:hover .nav-submenu {
+      display: block;
+    }
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import { styleProducts } from '../data/categories';
+---
+<section class="features section">
+  <div class="container">
+    <div class="features__layout">
+      <div class="features__intro reveal">
+        <h2>Wat is jouw stijl?</h2>
+        <p>Bij Huis, Tuin &amp; Liefde kun jij je huis en tuin inrichten zoals jij wil. Ben je nog op zoek naar jouw stijl? Laat je inspireren door onze gidsen en vind de sfeer die bij jou past.</p>
+      </div>
+
+      <div class="features__grid">
+        {styleProducts.map((product, i) => (
+          <a href={product.href} class="card features__card reveal" style={`transition-delay: ${i * 0.1}s`}>
+            <img
+              src={product.image}
+              alt={product.imageAlt}
+              class="card__image"
+              width="640"
+              height="427"
+              loading="lazy"
+            />
+            <div class="card__body">
+              <h4 class="card__title">{product.title}</h4>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features__layout {
+    display: grid;
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+  }
+
+  .features__intro p {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+  }
+
+  .features__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .features__card .card__image {
+    aspect-ratio: 3 / 2;
+    height: clamp(150px, 20vw, 200px);
+    object-fit: cover;
+  }
+
+  @media (min-width: 768px) {
+    .features__layout {
+      grid-template-columns: 45% 55%;
+    }
+
+    .features__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .features__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>

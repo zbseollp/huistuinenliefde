@@ -1,0 +1,110 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'blog'>;
+  featured?: boolean;
+}
+
+const { entry, featured = false } = Astro.props;
+
+function formatDate(date: Date): string {
+  const months = [
+    'januari', 'februari', 'maart', 'april', 'mei', 'juni',
+    'juli', 'augustus', 'september', 'oktober', 'november', 'december',
+  ];
+  return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+}
+
+const slug = entry.id;
+const image = entry.data.featuredImage ?? '/images/blog/terras-tuin.jpg';
+const imageAlt = entry.data.imageAlt ?? entry.data.title;
+---
+<article class:list={['blog-card', { 'blog-card--featured': featured }]}>
+  <a href={`/${slug}/`} class="blog-card__link">
+    <div class="blog-card__image-wrap">
+      <img
+        src={image}
+        alt={imageAlt}
+        class="blog-card__image"
+        width="1280"
+        height="853"
+        loading="lazy"
+      />
+    </div>
+    <div class="blog-card__body">
+      <h3 class="blog-card__title">{entry.data.title}</h3>
+      <time class="blog-card__date" datetime={entry.data.pubDate.toISOString()}>
+        {formatDate(entry.data.pubDate)}
+      </time>
+      <span class="blog-card__read-more">Lees verder »</span>
+    </div>
+  </a>
+</article>
+
+<style>
+  .blog-card {
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: var(--color-secondary);
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+
+  .blog-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .blog-card__link {
+    display: block;
+    color: inherit;
+  }
+
+  .blog-card__image-wrap {
+    overflow: hidden;
+  }
+
+  .blog-card__image {
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  .blog-card:hover .blog-card__image {
+    transform: scale(1.05);
+  }
+
+  .blog-card__body {
+    padding: 1.25rem 0 0;
+  }
+
+  .blog-card__title {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+    transition: color var(--transition);
+  }
+
+  .blog-card:hover .blog-card__title {
+    color: var(--color-accent);
+  }
+
+  .blog-card__date {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    margin-bottom: 0.75rem;
+  }
+
+  .blog-card__read-more {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-accent);
+  }
+
+  .blog-card--featured .blog-card__image {
+    aspect-ratio: 16 / 9;
+  }
+</style>

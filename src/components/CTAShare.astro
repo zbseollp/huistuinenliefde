@@ -1,0 +1,66 @@
+---
+<section class="share-cta" style="background-image: url('/images/hero/cta-share.jpg')">
+  <div class="share-cta__overlay"></div>
+  <div class="container share-cta__content reveal">
+    <h1>Deel jouw binnen- en buiteninterieur en inspireer anderen</h1>
+    <p>Heb jij je eigen stijl ontwikkeld en ben je stiekem best wel trots op hoe jouw huis en tuin eruit ziet? Laat het ons weten! Zo kan je anderen inspireren om ook zelf aan de slag te gaan.</p>
+  </div>
+</section>
+
+<section class="see-also section--sm">
+  <div class="container reveal">
+    <h2>Zie ook</h2>
+    <p><a href="#" class="see-also__link">Betaalbare Instagram likes kopen</a></p>
+  </div>
+</section>
+
+<style>
+  .share-cta {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: var(--section-padding) 0;
+  }
+
+  .share-cta__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 100%);
+  }
+
+  .share-cta__content {
+    position: relative;
+    z-index: 1;
+    max-width: 55%;
+  }
+
+  .share-cta__content p {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+  }
+
+  .see-also {
+    background: var(--color-secondary);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .see-also h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .see-also__link {
+    color: var(--color-text);
+    transition: color var(--transition);
+  }
+
+  .see-also__link:hover {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 767px) {
+    .share-cta__content {
+      max-width: 100%;
+    }
+  }
+</style>

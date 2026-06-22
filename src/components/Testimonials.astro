@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import BlogCard from './BlogCard.astro';
+
+interface Props {
+  limit?: number;
+  showTitle?: boolean;
+}
+
+const { limit = 8, showTitle = true } = Astro.props;
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, limit);
+---
+<section class="blog-section section">
+  <div class="container">
+    {showTitle && (
+      <div class="section-header reveal">
+        <h2>Onze laatste blogs</h2>
+      </div>
+    )}
+
+    <div class="blog-section__grid">
+      {posts.map((post, i) => (
+        <div class="reveal" style={`transition-delay: ${i * 0.06}s`}>
+          <BlogCard entry={post} />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .blog-section__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  @media (min-width: 600px) {
+    .blog-section__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .blog-section__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>

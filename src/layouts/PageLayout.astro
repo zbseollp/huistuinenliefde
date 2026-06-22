@@ -1,0 +1,79 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  entry: CollectionEntry<'pages'>;
+}
+
+const { entry } = Astro.props;
+const featuredImage = entry.data.featuredImage;
+---
+<BaseLayout title={entry.data.title} description={entry.data.description} image={featuredImage}>
+  <Header slot="header" />
+
+  <section class="page-hero section--sm">
+    <div class="container reveal">
+      <h1>{entry.data.title}</h1>
+      {entry.data.description && <p>{entry.data.description}</p>}
+    </div>
+  </section>
+
+  {featuredImage && (
+    <div class="container page-featured reveal">
+      <img src={featuredImage} alt={entry.data.title} class="page-featured__image" width="1280" height="720" />
+    </div>
+  )}
+
+  <section class="section page-content">
+    <div class="container reveal">
+      <div class="page-content__body">
+        <slot />
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .page-hero {
+    background: var(--color-secondary);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-hero p {
+    max-width: 42rem;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+  }
+
+  .page-featured {
+    padding-top: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .page-featured__image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+  }
+
+  .page-content__body {
+    max-width: 720px;
+    margin-inline: auto;
+    line-height: 1.8;
+  }
+
+  .page-content__body :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--card-radius);
+  }
+
+  .page-content__body :global(a) {
+    color: var(--color-accent);
+  }
+</style>

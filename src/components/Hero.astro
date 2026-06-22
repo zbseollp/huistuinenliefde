@@ -1,0 +1,123 @@
+---
+import { heroCategories } from '../data/categories';
+---
+<section class="hero">
+  <div class="hero__main" style={`background-image: url('/images/hero/hero-main.jpg')`}>
+    <div class="hero__overlay"></div>
+    <div class="container hero__content reveal">
+      <h1>Huis, Tuin &amp; Liefde</h1>
+      <p>Heb jij een voorliefde voor je huis en tuin? Dan ben jij bij Huis, Tuin &amp; Liefde op het juiste adres. Laat je inspireren en vind de beste producten voor bij jou thuis.</p>
+    </div>
+  </div>
+
+  <div class="hero__categories">
+    {heroCategories.map((cat) => (
+      <a href={cat.href} class="hero__category reveal" style={`background-image: url('${cat.image}')`}>
+        <div class="hero__category-overlay"></div>
+        <span class="hero__category-label">
+          {cat.label}
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+    ))}
+  </div>
+</section>
+
+<style>
+  .hero__main {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: clamp(4rem, 10vw, 8.5rem) 0 clamp(6rem, 12vw, 15rem);
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.75) 50%, rgba(255,255,255,0.4) 100%);
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    max-width: 540px;
+  }
+
+  .hero__content h1 {
+    margin-bottom: 1rem;
+  }
+
+  .hero__content p {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .hero__categories {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: -4rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero__category {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 200px;
+    background-size: cover;
+    background-position: center;
+    padding: 2rem;
+    overflow: hidden;
+    transition: transform var(--transition);
+  }
+
+  .hero__category:hover {
+    transform: scale(1.02);
+    z-index: 1;
+  }
+
+  .hero__category-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 100%);
+    transition: background var(--transition);
+  }
+
+  .hero__category:hover .hero__category-overlay {
+    background: linear-gradient(to top, rgba(44,108,58,0.75) 0%, rgba(0,0,0,0.25) 100%);
+  }
+
+  .hero__category-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-nav);
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-weight: 600;
+    color: var(--color-secondary);
+    letter-spacing: 0.06em;
+  }
+
+  .hero__category-label svg {
+    transition: transform var(--transition);
+  }
+
+  .hero__category:hover .hero__category-label svg {
+    transform: translateX(4px);
+  }
+
+  @media (min-width: 768px) {
+    .hero__categories {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .hero__category {
+      min-height: 280px;
+      padding: 2rem;
+    }
+  }
+</style>

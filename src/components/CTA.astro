@@ -1,0 +1,45 @@
+---
+<section class="cta-banner" style="background-image: url('/images/hero/nature-indoor.jpg')">
+  <div class="cta-banner__overlay"></div>
+  <div class="container cta-banner__content reveal">
+    <div class="cta-banner__text">
+      <h1>Geen tuin? Maak plaats voor natuur in je huis</h1>
+      <p>Niet iedereen heeft een tuin. Vooral in een stad is het niet gebruikelijk om veel ruimte buiten te hebben. Kijk snel hoe jij de natuur naar binnen kan halen.</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-banner {
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    padding: var(--section-padding) 0;
+  }
+
+  .cta-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 45%, rgba(255,255,255,0.3) 100%);
+  }
+
+  .cta-banner__content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .cta-banner__text {
+    max-width: 540px;
+  }
+
+  .cta-banner__text p {
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    line-height: 1.8;
+  }
+
+  @media (min-width: 768px) {
+    .cta-banner__text {
+      max-width: 55%;
+    }
+  }
+</style>
