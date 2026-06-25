@@ -58,6 +58,7 @@ export const mainNavigation: NavItem[] = [
 ];
 
 export const socialLinks = [
+  { label: 'TikTok', href: 'https://tiktok.com', icon: 'tiktok' },
   { label: 'Youtube', href: 'https://youtube.com', icon: 'youtube' },
   { label: 'Facebook', href: 'https://facebook.com', icon: 'facebook' },
   { label: 'Twitter', href: 'https://twitter.com', icon: 'twitter' },

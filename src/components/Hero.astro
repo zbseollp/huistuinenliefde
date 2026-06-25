@@ -2,18 +2,19 @@
 import { heroCategories } from '../data/categories';
 ---
 <section class="hero">
-  <div class="hero__main" style={`background-image: url('/images/hero/hero-main.jpg')`}>
-    <div class="hero__overlay"></div>
-    <div class="container hero__content reveal">
-      <h1>Huis, Tuin &amp; Liefde</h1>
-      <p>Heb jij een voorliefde voor je huis en tuin? Dan ben jij bij Huis, Tuin &amp; Liefde op het juiste adres. Laat je inspireren en vind de beste producten voor bij jou thuis.</p>
+  <div class="hero__main" style="background-image: url('/images/hero/hero-main.jpg')">
+    <div class="container hero__layout">
+      <div class="hero__content">
+        <h1>Huis, Tuin &amp; Liefde</h1>
+        <p>Heb jij een voorliefde voor je huis en tuin? Dan ben jij bij Huis, Tuin &amp; Liefde op het juiste adres. Laat je inspireren en vind de beste producten voor bij jou thuis.</p>
+      </div>
+      <div class="hero__visual" aria-hidden="true"></div>
     </div>
   </div>
 
   <div class="hero__categories">
     {heroCategories.map((cat) => (
-      <a href={cat.href} class="hero__category reveal" style={`background-image: url('${cat.image}')`}>
-        <div class="hero__category-overlay"></div>
+      <a href={cat.href} class="hero__category" style={`background-image: url('${cat.image}')`}>
         <span class="hero__category-label">
           {cat.label}
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -27,36 +28,56 @@ import { heroCategories } from '../data/categories';
   .hero__main {
     position: relative;
     background-size: cover;
-    background-position: center;
-    padding: clamp(4rem, 10vw, 8.5rem) 0 clamp(6rem, 12vw, 15rem);
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 133px 0 251px;
   }
 
-  .hero__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.75) 50%, rgba(255,255,255,0.4) 100%);
+  .hero__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
   }
 
   .hero__content {
     position: relative;
     z-index: 1;
-    max-width: 540px;
+    text-align: left;
   }
 
   .hero__content h1 {
     margin-bottom: 1rem;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1.15;
+    text-align: left;
   }
 
   .hero__content p {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    line-height: 1.8;
+    font-size: 1rem;
+    line-height: 1.7;
     color: var(--color-text);
+    text-align: left;
+  }
+
+  .hero__visual {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .hero__layout {
+      grid-template-columns: 45% 55%;
+    }
+
+    .hero__visual {
+      display: block;
+    }
   }
 
   .hero__categories {
     display: grid;
     grid-template-columns: 1fr;
-    margin-top: -4rem;
+    margin-top: -2px;
     position: relative;
     z-index: 2;
   }
@@ -65,41 +86,24 @@ import { heroCategories } from '../data/categories';
     position: relative;
     display: flex;
     align-items: flex-end;
-    min-height: 200px;
+    min-height: 0;
     background-size: cover;
-    background-position: center;
-    padding: 2rem;
+    background-position: center center;
+    background-repeat: no-repeat;
+    padding: 285px 32px 36px;
     overflow: hidden;
-    transition: transform var(--transition);
-  }
-
-  .hero__category:hover {
-    transform: scale(1.02);
-    z-index: 1;
-  }
-
-  .hero__category-overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.2) 100%);
-    transition: background var(--transition);
-  }
-
-  .hero__category:hover .hero__category-overlay {
-    background: linear-gradient(to top, rgba(44,108,58,0.75) 0%, rgba(0,0,0,0.25) 100%);
+    text-decoration: none;
   }
 
   .hero__category-label {
-    position: relative;
-    z-index: 1;
     display: flex;
     align-items: center;
     gap: 0.625rem;
     font-family: var(--font-nav);
-    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    font-size: 1.5rem;
     font-weight: 600;
     color: var(--color-secondary);
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
   }
 
   .hero__category-label svg {
@@ -110,14 +114,25 @@ import { heroCategories } from '../data/categories';
     transform: translateX(4px);
   }
 
-  @media (min-width: 768px) {
-    .hero__categories {
-      grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 1024px) {
+    .hero__main {
+      padding: 72px 0;
     }
 
     .hero__category {
-      min-height: 280px;
-      padding: 2rem;
+      padding: 124px 32px 32px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    .hero__main {
+      padding: 36px 0;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .hero__categories {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

@@ -30,6 +30,7 @@ const pages = defineCollection({
     pubDate: z.coerce.date().optional(),
     updatedDate: z.coerce.date().optional(),
     featuredImage: z.string().optional(),
+    pageType: z.enum(['product']).optional(),
   }),
 });
 

@@ -24,7 +24,7 @@ function isActive(href: string): boolean {
         >
           {item.label}
           {item.children && (
-            <svg class="nav-link__chevron" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 10l5 5 5-5z"/></svg>
+            <svg class="nav-link__caret" width="10" height="10" viewBox="0 0 320 512" fill="currentColor" aria-hidden="true"><path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9S300.9 192 288 192L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
           )}
         </a>
         {item.children && (
@@ -53,25 +53,28 @@ function isActive(href: string): boolean {
     align-items: center;
     gap: 0.25rem;
     padding: 0.875rem 1rem;
-    font-family: var(--font-nav);
+    font-family: var(--font-body);
     font-size: 0.875rem;
-    font-weight: 600;
+    font-weight: 400;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--color-primary);
+    letter-spacing: 0.02em;
+    color: var(--color-text);
     transition: color var(--transition);
   }
 
   .nav-link:hover,
   .nav-link--active {
-    color: var(--color-accent);
+    color: var(--color-text);
   }
 
-  .nav-link__chevron {
+  .nav-link__caret {
+    flex-shrink: 0;
+    margin-left: 0.125rem;
+    opacity: 0.85;
     transition: transform var(--transition);
   }
 
-  .nav-item--expanded .nav-link__chevron {
+  .nav-item--expanded .nav-link__caret {
     transform: rotate(180deg);
   }
 
@@ -126,7 +129,11 @@ function isActive(href: string): boolean {
     }
 
     .nav-link {
-      padding: 0.5rem 0.875rem;
+      padding: 0.5rem 1rem;
+    }
+
+    .nav__list {
+      justify-content: center;
     }
 
     .nav-item {
@@ -145,9 +152,10 @@ function isActive(href: string): boolean {
       min-width: 240px;
       padding: 0.75rem 0;
       background: var(--color-secondary);
+      border: 1px solid var(--color-border);
       border-radius: var(--card-radius);
       box-shadow: var(--shadow-md);
-      z-index: 50;
+      z-index: 1001;
     }
 
     .nav-item--expanded .nav-submenu {

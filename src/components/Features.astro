@@ -4,25 +4,23 @@ import { styleProducts } from '../data/categories';
 <section class="features section">
   <div class="container">
     <div class="features__layout">
-      <div class="features__intro reveal">
+      <div class="features__intro">
         <h2>Wat is jouw stijl?</h2>
         <p>Bij Huis, Tuin &amp; Liefde kun jij je huis en tuin inrichten zoals jij wil. Ben je nog op zoek naar jouw stijl? Laat je inspireren door onze gidsen en vind de sfeer die bij jou past.</p>
       </div>
 
       <div class="features__grid">
-        {styleProducts.map((product, i) => (
-          <a href={product.href} class="card features__card reveal" style={`transition-delay: ${i * 0.1}s`}>
+        {styleProducts.map((product) => (
+          <a href={product.href} class="features__card">
             <img
               src={product.image}
               alt={product.imageAlt}
-              class="card__image"
+              class="features__card-image"
               width="640"
               height="427"
               loading="lazy"
             />
-            <div class="card__body">
-              <h4 class="card__title">{product.title}</h4>
-            </div>
+            <h4 class="features__card-title">{product.title}</h4>
           </a>
         ))}
       </div>
@@ -48,25 +46,29 @@ import { styleProducts } from '../data/categories';
     gap: clamp(1rem, 3vw, 1.5rem);
   }
 
-  .features__card .card__image {
-    aspect-ratio: 3 / 2;
+  .features__card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .features__card-image {
+    width: 100%;
     height: clamp(150px, 20vw, 200px);
     object-fit: cover;
+    display: block;
+  }
+
+  .features__card-title {
+    margin: 1rem 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-primary);
   }
 
   @media (min-width: 768px) {
     .features__layout {
       grid-template-columns: 45% 55%;
-    }
-
-    .features__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 1024px) {
-    .features__grid {
-      grid-template-columns: repeat(2, 1fr);
     }
   }
 </style>

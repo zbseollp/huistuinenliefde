@@ -1,66 +1,106 @@
 ---
-<section class="share-cta" style="background-image: url('/images/hero/cta-share.jpg')">
-  <div class="share-cta__overlay"></div>
-  <div class="container share-cta__content reveal">
-    <h1>Deel jouw binnen- en buiteninterieur en inspireer anderen</h1>
-    <p>Heb jij je eigen stijl ontwikkeld en ben je stiekem best wel trots op hoe jouw huis en tuin eruit ziet? Laat het ons weten! Zo kan je anderen inspireren om ook zelf aan de slag te gaan.</p>
+<section class="share-cta" style="background-image: url('/images/hero/rectangle-10.jpg')">
+  <div class="container share-cta__layout">
+    <div class="share-cta__text">
+      <h1>Deel jouw binnen- en buiteninterieur<br />en inspireer anderen</h1>
+      <p>Heb jij je eigen stijl ontwikkeld en ben je stiekem best wel trots op hoe jouw huis en tuin eruit ziet? Laat het ons weten! Zo kan je anderen inspireren om ook zelf aan de slag te gaan.</p>
+    </div>
+    <div class="share-cta__visual" aria-hidden="true"></div>
   </div>
 </section>
 
-<section class="see-also section--sm">
-  <div class="container reveal">
+<section class="see-also">
+  <div class="container">
     <h2>Zie ook</h2>
-    <p><a href="#" class="see-also__link">Betaalbare Instagram likes kopen</a></p>
+    <p>
+      <a
+        href="https://volgers-likes.nl/instagram-likes-kopen/"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="see-also__link"
+      >
+        Betaalbare Instagram likes kopen
+      </a>
+    </p>
   </div>
 </section>
 
 <style>
   .share-cta {
-    position: relative;
     background-size: cover;
-    background-position: center;
-    padding: var(--section-padding) 0;
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding: 124px 0;
   }
 
-  .share-cta__overlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.4) 100%);
+  .share-cta__layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 2rem;
   }
 
-  .share-cta__content {
-    position: relative;
-    z-index: 1;
-    max-width: 55%;
+  .share-cta__text {
+    text-align: left;
+    max-width: 480px;
   }
 
-  .share-cta__content p {
+  .share-cta__text h1 {
+    margin-bottom: 1rem;
+    max-width: 22rem;
+  }
+
+  .share-cta__text p {
     font-size: clamp(1rem, 2vw, 1.125rem);
     line-height: 1.8;
+    margin: 0;
+    max-width: 26rem;
   }
 
   .see-also {
+    padding: clamp(2.25rem, 4vw, 4.5rem) 0;
     background: var(--color-secondary);
-    border-top: 1px solid var(--color-border);
   }
 
   .see-also h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+    font-weight: 600;
+    margin: 0 0 1rem;
+  }
+
+  .see-also p {
+    margin: 0;
   }
 
   .see-also__link {
-    color: var(--color-text);
-    transition: color var(--transition);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #d63384;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 2px;
+    transition: text-decoration-color var(--transition);
   }
 
   .see-also__link:hover {
-    color: var(--color-accent);
+    text-decoration-color: #d63384;
+  }
+
+  @media (min-width: 768px) {
+    .share-cta__layout {
+      grid-template-columns: minmax(0, 45%) 1fr;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .share-cta {
+      padding: 72px 0;
+    }
   }
 
   @media (max-width: 767px) {
-    .share-cta__content {
-      max-width: 100%;
+    .share-cta {
+      padding: 36px 0;
     }
   }
 </style>
