@@ -28,3 +28,7 @@ __pycache__/
 # Migration artifacts
 migration-summary.json
 src/content/blog_backup/
+
+# Editor
+.idea/
+.vscode/
