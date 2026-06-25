@@ -1,6 +1,30 @@
+# Dependencies
 node_modules/
+
+# Build output
 dist/
 .astro/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Cloudflare
+.wrangler/
+
+# OS
 .DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Python (migration scripts)
+__pycache__/
+*.py[cod]
+
+# Migration artifacts
 migration-summary.json
 src/content/blog_backup/
