@@ -1,8 +1,5 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { readFileSync, existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import path from 'node:path';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -11,12 +8,16 @@ interface Props {
 
 const { entry } = Astro.props;
 
-const htmlPath = path.join(
-  fileURLToPath(new URL('../content/product-html', import.meta.url)),
-  `${entry.id}.html`,
-);
+// Bundle product HTML via Vite so Cloudflare/static builds include content.
+// readFileSync(import.meta.url) resolves incorrectly in Workers builds.
+const productHtmlModules = import.meta.glob<string>('../content/product-html/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
-const htmlContent = existsSync(htmlPath) ? readFileSync(htmlPath, 'utf-8') : '';
+const htmlContent =
+  productHtmlModules[`../content/product-html/${entry.id}.html`] ?? '';
 ---
 <BaseLayout title={entry.data.title} description={entry.data.description}>
   <slot name="header" />
@@ -308,12 +309,22 @@ const htmlContent = existsSync(htmlPath) ? readFileSync(htmlPath, 'utf-8') : '';
   .elementor-content .elementor-tab-title {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    gap: 0.75rem;
     padding: 1rem 1.25rem;
     font-weight: 600;
     font-size: 0.9375rem;
     cursor: pointer;
     background: #fafafa;
+  }
+
+  .elementor-content .elementor-accordion-icon-right {
+    margin-left: auto;
+  }
+
+  .elementor-content .elementor-accordion-title {
+    color: inherit;
+    text-decoration: none;
+    flex: 1;
   }
 
   .elementor-content .elementor-tab-content {
@@ -324,8 +335,43 @@ const htmlContent = existsSync(htmlPath) ? readFileSync(htmlPath, 'utf-8') : '';
   }
 
   .elementor-content .elementor-accordion-icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
     font-size: 1rem;
-    color: var(--color-accent);
+    color: var(--color-text);
+    line-height: 1;
+  }
+
+  .elementor-content .elementor-accordion-icon i {
+    font-style: normal;
+    font-family: inherit;
+  }
+
+  /* Font Awesome is not loaded — render +/- with CSS */
+  .elementor-content .elementor-accordion-icon-closed .fa-plus::before,
+  .elementor-content .elementor-accordion-icon-closed .fas.fa-plus::before {
+    content: '+';
+    font-weight: 700;
+  }
+
+  .elementor-content .elementor-accordion-icon-opened .fa-minus::before,
+  .elementor-content .elementor-accordion-icon-opened .fas.fa-minus::before {
+    content: '−';
+    font-weight: 700;
+  }
+
+  .elementor-content .elementor-accordion-icon-opened {
+    display: none;
+  }
+
+  .elementor-content .elementor-accordion-item.active .elementor-accordion-icon-opened {
+    display: inline;
+  }
+
+  .elementor-content .elementor-accordion-item.active .elementor-accordion-icon-closed {
+    display: none;
   }
 
   /* Author box */
@@ -339,11 +385,27 @@ const htmlContent = existsSync(htmlPath) ? readFileSync(htmlPath, 'utf-8') : '';
     background: #fafafa;
   }
 
-  .elementor-content .elementor-author-box__avatar img {
+  .elementor-content .elementor-author-box__avatar {
+    flex: 0 0 64px;
     width: 64px;
     height: 64px;
+    overflow: hidden;
+    border-radius: 50%;
+  }
+
+  .elementor-content .elementor-author-box__avatar img {
+    display: block;
+    width: 64px;
+    height: 64px;
+    max-width: none;
     border-radius: 50%;
     object-fit: cover;
+    object-position: center;
+  }
+
+  .elementor-content .elementor-author-box__text {
+    min-width: 0;
+    flex: 1;
   }
 
   .elementor-content .elementor-author-box__name {

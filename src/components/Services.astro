@@ -1,26 +1,45 @@
 ---
 import { categorySections } from '../data/categories';
 ---
-<section class="services section">
+<section class="categories section">
   <div class="container">
-    <div class="section-header section-header--center">
+    <div class="categories__header reveal">
+      <p class="categories__eyebrow">Ontdek &amp; vergelijk</p>
       <h2>Categorieën</h2>
-      <p>VInd hier onze categorieën en laat je inspireren zodat jij je huis en tuin kan omtoveren tot jouw droom thuis.</p>
+      <p>
+        Vind hier onze categorieën en laat je inspireren zodat jij je huis en tuin
+        kan omtoveren tot jouw droom thuis.
+      </p>
     </div>
 
-    <div class="services__grid">
-      {categorySections.map((category) => (
-        <article class="services__card">
-          <div class="services__card-image">
-            <img src={category.image} alt={category.imageAlt} width="640" height="427" loading="lazy" />
+    <div class="categories__grid">
+      {categorySections.map((category, index) => (
+        <article class="category-card reveal" style={`transition-delay: ${(index % 3) * 0.06}s`}>
+          <div class="category-card__media">
+            <img
+              src={category.image}
+              alt={category.imageAlt}
+              width="640"
+              height="427"
+              loading="lazy"
+            />
+            <div class="category-card__shade" aria-hidden="true"></div>
           </div>
-          <div class="services__card-body">
-            <h3 class="services__card-title">{category.title}</h3>
-            <div class="services__links">
+
+          <div class="category-card__body">
+            <h3 class="category-card__title">{category.title}</h3>
+            <ul class="category-card__links">
               {category.links.map((link) => (
-                <a href={link.href}>{link.label}</a>
+                <li>
+                  <a href={link.href}>
+                    <span>{link.label}</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                      <path d="M5 12h14M13 6l6 6-6 6"></path>
+                    </svg>
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </article>
       ))}
@@ -29,71 +48,162 @@ import { categorySections } from '../data/categories';
 </section>
 
 <style>
-  .services {
-    padding-top: 72px;
+  .categories {
+    position: relative;
+    background:
+      radial-gradient(ellipse 60% 50% at 0% 0%, rgba(44, 108, 58, 0.07), transparent 55%),
+      radial-gradient(ellipse 50% 40% at 100% 100%, rgba(252, 185, 0, 0.06), transparent 50%),
+      #f7f9f7;
+    overflow: hidden;
   }
 
-  .services__grid {
+  .categories__header {
+    max-width: 40rem;
+    margin: 0 auto clamp(2rem, 4vw, 3rem);
+    text-align: center;
+  }
+
+  .categories__eyebrow {
+    margin: 0 0 0.65rem;
+    font-family: var(--font-nav);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .categories__header h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  .categories__header p {
+    margin: 0;
+    color: var(--color-heading-muted);
+    font-size: clamp(1rem, 2vw, 1.0625rem);
+  }
+
+  .categories__grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0;
+    gap: clamp(1.25rem, 3vw, 1.75rem);
   }
 
-  .services__card {
-    background: var(--color-secondary);
-    margin: 10px 10px 32px;
-  }
-
-  .services__card-image img {
-    width: 100%;
-    height: clamp(150px, 25vw, 200px);
-    object-fit: cover;
-    display: block;
-  }
-
-  .services__card-body {
-    padding: 1rem 0 0;
-  }
-
-  .services__card-title {
-    font-family: var(--font-body);
-    font-size: 0.875rem;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    color: var(--color-accent);
-    margin: 0 0 0.75rem;
-  }
-
-  .services__links {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .services__links a {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #d63384;
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    text-underline-offset: 2px;
-    transition: text-decoration-color var(--transition);
-  }
-
-  .services__links a:hover {
-    text-decoration-color: #d63384;
-  }
-
-  @media (min-width: 600px) {
-    .services__grid {
-      grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 700px) {
+    .categories__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
   @media (min-width: 1024px) {
-    .services__grid {
-      grid-template-columns: repeat(3, 1fr);
+    .categories__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+  }
+
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(44, 108, 58, 0.22);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .category-card__media {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .category-card__media img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.45s ease;
+  }
+
+  .category-card:hover .category-card__media img {
+    transform: scale(1.05);
+  }
+
+  .category-card__shade {
+    position: absolute;
+    inset: auto 0 0;
+    height: 42%;
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.18));
+    pointer-events: none;
+  }
+
+  .category-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    flex: 1;
+    padding: 1.15rem 1.2rem 1.35rem;
+  }
+
+  .category-card__title {
+    margin: 0;
+    font-family: var(--font-nav);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .category-card__links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .category-card__links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.45rem 0.55rem;
+    margin: 0 -0.55rem;
+    border-radius: 8px;
+    color: var(--color-text);
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    text-decoration: none;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .category-card__links a span {
+    min-width: 0;
+  }
+
+  .category-card__links a svg {
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateX(-4px);
+    color: var(--color-accent);
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .category-card__links a:hover {
+    background: rgba(44, 108, 58, 0.08);
+    color: var(--color-accent);
+  }
+
+  .category-card__links a:hover svg {
+    opacity: 1;
+    transform: translateX(0);
   }
 </style>

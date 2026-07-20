@@ -1,0 +1,696 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+const productHtmlModules = import.meta.glob('../content/product-html/*.html', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
+
+const pages = await getCollection('pages');
+const posts = await getCollection('blog');
+
+const EXCLUDED_PAGE_IDS = new Set(['top-10', 'zb_mp_product-bbq']);
+
+function isProductPage(entry: (typeof pages)[number]): boolean {
+  return (
+    entry.data.pageType === 'product' ||
+    `../content/product-html/${entry.id}.html` in productHtmlModules
+  );
+}
+
+function productLabel(entry: (typeof pages)[number]): string {
+  if (entry.id.startsWith('beste-')) {
+    const name = entry.id.replace(/^beste-/, '').replace(/-/g, ' ');
+    return `Top 10 ${name}`;
+  }
+
+  return entry.data.title
+    .replace(/\s*\|\s*.*$/, '')
+    .replace(/\s*-\s*huistuinenliefde\.nl$/i, '')
+    .trim();
+}
+
+function categoryLabel(raw: string): string {
+  const cleaned = raw.replace(/^["']|["']$/g, '').trim();
+  if (!cleaned) return 'Uncategorized';
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+}
+
+const staticPages = [
+  { href: '/', label: 'Home' },
+  { href: '/blog/', label: 'Blog' },
+  { href: '/contact/', label: 'Contact' },
+  ...pages
+    .filter((entry) => !isProductPage(entry) && !EXCLUDED_PAGE_IDS.has(entry.id))
+    .map((entry) => ({
+      href: `/${entry.id}/`,
+      label: entry.data.title,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label, 'nl')),
+];
+
+const allProducts = pages
+  .filter((entry) => isProductPage(entry) && !EXCLUDED_PAGE_IDS.has(entry.id))
+  .map((entry) => ({
+    href: `/${entry.id}/`,
+    label: productLabel(entry),
+    kind: entry.id.startsWith('beste-') ? 'top10' : 'bbq',
+  }));
+
+const top10Pages = allProducts
+  .filter((item) => item.kind === 'top10')
+  .sort((a, b) => a.label.localeCompare(b.label, 'nl'));
+
+const bbqPages = allProducts
+  .filter((item) => item.kind === 'bbq')
+  .sort((a, b) => a.label.localeCompare(b.label, 'nl'));
+
+const postsByCategory = new Map<string, { href: string; label: string }[]>();
+for (const post of posts) {
+  const categories = post.data.categories?.length ? post.data.categories : ['uncategorized'];
+  for (const category of categories) {
+    const label = categoryLabel(category);
+    const list = postsByCategory.get(label) ?? [];
+    list.push({
+      href: `/${post.id}/`,
+      label: post.data.title,
+    });
+    postsByCategory.set(label, list);
+  }
+}
+
+const blogSections = [...postsByCategory.entries()]
+  .map(([category, items]) => ({
+    category,
+    items: items.sort((a, b) => a.label.localeCompare(b.label, 'nl')),
+  }))
+  .sort((a, b) => a.category.localeCompare(b.category, 'nl'));
+
+const stats = [
+  { label: "Pagina's", value: staticPages.length },
+  { label: 'Top 10 lijsten', value: top10Pages.length },
+  { label: 'BBQ producten', value: bbqPages.length },
+  { label: 'Blogberichten', value: posts.length },
+];
+---
+<BaseLayout
+  title="Sitemap"
+  description="Overzicht van alle pagina's, productvergelijkingen en blogberichten op HuisTuinLiefde.nl."
+>
+  <Header slot="header" />
+
+  <section class="sitemap-hero">
+    <div class="sitemap-hero__glow" aria-hidden="true"></div>
+    <div class="container sitemap-hero__inner reveal">
+      <p class="sitemap-hero__eyebrow">HuisTuinLiefde.nl</p>
+      <h1>Sitemap</h1>
+      <p class="sitemap-hero__lead">
+        Vind snel elke pagina, Top 10 vergelijking, BBQ-review of blog op één overzichtelijke plek.
+      </p>
+
+      <div class="sitemap-stats" aria-label="Sitemap overzicht">
+        {stats.map((stat) => (
+          <div class="sitemap-stats__item">
+            <span class="sitemap-stats__value">{stat.value}</span>
+            <span class="sitemap-stats__label">{stat.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <nav class="sitemap-jump" aria-label="Spring naar sectie">
+        <a href="#paginas">Pagina's</a>
+        <a href="#top10">Top 10</a>
+        <a href="#bbq">BBQ</a>
+        <a href="#blog">Blog</a>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section sitemap">
+    <div class="container">
+      <div class="sitemap-toolbar reveal">
+        <label class="sitemap-search" for="sitemap-filter">
+          <span class="visually-hidden">Zoek in sitemap</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20l-3.5-3.5"></path>
+          </svg>
+          <input
+            id="sitemap-filter"
+            type="search"
+            placeholder="Zoek een pagina, product of blog…"
+            autocomplete="off"
+          />
+        </label>
+        <p class="sitemap-toolbar__hint" data-sitemap-count>
+          {staticPages.length + top10Pages.length + bbqPages.length + posts.length} links
+        </p>
+      </div>
+
+      <section id="paginas" class="sitemap-block reveal" data-sitemap-section>
+        <header class="sitemap-block__header">
+          <div>
+            <h2>Pagina's</h2>
+            <p>Hoofdnavigatie en categoriepagina's</p>
+          </div>
+          <span class="sitemap-block__count">{staticPages.length}</span>
+        </header>
+        <ul class="sitemap-tiles">
+          {staticPages.map((item) => (
+            <li data-sitemap-item data-label={item.label.toLowerCase()}>
+              <a href={item.href} class="sitemap-tile">
+                <span>{item.label}</span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="top10" class="sitemap-block reveal" data-sitemap-section>
+        <header class="sitemap-block__header">
+          <div>
+            <h2>Top 10 vergelijkingen</h2>
+            <p>Productlijsten om snel de beste keuze te vinden</p>
+          </div>
+          <span class="sitemap-block__count">{top10Pages.length}</span>
+        </header>
+        <ul class="sitemap-links">
+          {top10Pages.map((item) => (
+            <li data-sitemap-item data-label={item.label.toLowerCase()}>
+              <a href={item.href}>
+                <span>{item.label}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="bbq" class="sitemap-block reveal" data-sitemap-section>
+        <header class="sitemap-block__header">
+          <div>
+            <h2>BBQ producten</h2>
+            <p>Individuele barbecue reviews en productpagina's</p>
+          </div>
+          <span class="sitemap-block__count">{bbqPages.length}</span>
+        </header>
+        <ul class="sitemap-links">
+          {bbqPages.map((item) => (
+            <li data-sitemap-item data-label={item.label.toLowerCase()}>
+              <a href={item.href}>
+                <span>{item.label}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6"></path>
+                </svg>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section id="blog" class="sitemap-block reveal" data-sitemap-section>
+        <header class="sitemap-block__header">
+          <div>
+            <h2>Berichten per categorie</h2>
+            <p>Alle blogartikelen, gegroepeerd op onderwerp</p>
+          </div>
+          <span class="sitemap-block__count">{posts.length}</span>
+        </header>
+
+        <div class="sitemap-categories">
+          {blogSections.map((section) => (
+            <div class="sitemap-category" data-sitemap-category>
+              <h3>
+                {section.category === 'Blog' ? (
+                  <a href="/blog/">Categorie: {section.category}</a>
+                ) : (
+                  <>Categorie: {section.category}</>
+                )}
+                <span>{section.items.length}</span>
+              </h3>
+              <ul class="sitemap-links sitemap-links--compact">
+                {section.items.map((item) => (
+                  <li data-sitemap-item data-label={item.label.toLowerCase()}>
+                    <a href={item.href}>
+                      <span>{item.label}</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M13 6l6 6-6 6"></path>
+                      </svg>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <p class="sitemap-empty" data-sitemap-empty hidden>Geen resultaten voor je zoekopdracht.</p>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .sitemap-hero {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 3.5rem);
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(44, 108, 58, 0.14), transparent 55%),
+      radial-gradient(ellipse 70% 50% at 90% 80%, rgba(252, 185, 0, 0.12), transparent 50%),
+      linear-gradient(180deg, #f4f7f4 0%, #ffffff 100%);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sitemap-hero__glow {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(44, 108, 58, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(44, 108, 58, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 85%);
+    pointer-events: none;
+  }
+
+  .sitemap-hero__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 48rem;
+  }
+
+  .sitemap-hero__eyebrow {
+    margin: 0 0 0.75rem;
+    font-family: var(--font-nav);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .sitemap-hero h1 {
+    margin-bottom: 0.75rem;
+  }
+
+  .sitemap-hero__lead {
+    margin: 0;
+    font-size: clamp(1rem, 2vw, 1.125rem);
+    color: var(--color-heading-muted);
+  }
+
+  .sitemap-stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 700px) {
+    .sitemap-stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  .sitemap-stats__item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--color-border);
+    border-radius: var(--card-radius);
+    backdrop-filter: blur(4px);
+  }
+
+  .sitemap-stats__value {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-accent);
+  }
+
+  .sitemap-stats__label {
+    font-size: 0.8125rem;
+    color: var(--color-heading-muted);
+  }
+
+  .sitemap-jump {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .sitemap-jump a {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid rgba(44, 108, 58, 0.25);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--color-accent);
+    font-family: var(--font-nav);
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition);
+  }
+
+  .sitemap-jump a:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .sitemap {
+    background: #fafbfa;
+  }
+
+  .sitemap-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .sitemap-search {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    flex: 1 1 18rem;
+    max-width: 32rem;
+    padding: 0.75rem 1rem;
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    color: var(--color-muted);
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+
+  .sitemap-search:focus-within {
+    border-color: rgba(44, 108, 58, 0.45);
+    box-shadow: 0 0 0 3px rgba(44, 108, 58, 0.12);
+    color: var(--color-accent);
+  }
+
+  .sitemap-search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    font: inherit;
+    color: var(--color-text);
+  }
+
+  .sitemap-toolbar__hint {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--color-heading-muted);
+  }
+
+  .sitemap-block {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.25rem, 3vw, 1.75rem);
+    background: #fff;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .sitemap-block__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .sitemap-block__header h2 {
+    margin: 0 0 0.25rem;
+    font-size: clamp(1.25rem, 2.4vw, 1.6rem);
+  }
+
+  .sitemap-block__header p {
+    margin: 0;
+    font-size: 0.9375rem;
+    color: var(--color-heading-muted);
+  }
+
+  .sitemap-block__count {
+    flex-shrink: 0;
+    min-width: 2.25rem;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(44, 108, 58, 0.1);
+    color: var(--color-accent);
+    font-family: var(--font-nav);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .sitemap-tiles {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 600px) {
+    .sitemap-tiles {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 960px) {
+    .sitemap-tiles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .sitemap-tile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #f7faf7 100%);
+    color: var(--color-text);
+    font-family: var(--font-nav);
+    font-weight: 600;
+    transition: border-color var(--transition), transform var(--transition), box-shadow var(--transition), color var(--transition);
+  }
+
+  .sitemap-tile svg {
+    flex-shrink: 0;
+    color: var(--color-accent);
+    opacity: 0.7;
+    transition: transform var(--transition), opacity var(--transition);
+  }
+
+  .sitemap-tile:hover {
+    border-color: rgba(44, 108, 58, 0.35);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .sitemap-tile:hover svg {
+    opacity: 1;
+    transform: translateX(3px);
+  }
+
+  .sitemap-links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.35rem 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 768px) {
+    .sitemap-links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .sitemap-links:not(.sitemap-links--compact) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .sitemap-links a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 8px;
+    color: var(--color-text);
+    line-height: 1.4;
+    transition: background var(--transition), color var(--transition);
+  }
+
+  .sitemap-links a span {
+    min-width: 0;
+  }
+
+  .sitemap-links a svg {
+    flex-shrink: 0;
+    opacity: 0;
+    transform: translateX(-4px);
+    color: var(--color-accent);
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .sitemap-links a:hover {
+    background: rgba(44, 108, 58, 0.08);
+    color: var(--color-accent);
+  }
+
+  .sitemap-links a:hover svg {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .sitemap-categories {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 900px) {
+    .sitemap-categories {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .sitemap-category {
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: #fbfcfb;
+  }
+
+  .sitemap-category h3 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin: 0 0 0.75rem;
+    font-size: 1rem;
+  }
+
+  .sitemap-category h3 a {
+    color: inherit;
+  }
+
+  .sitemap-category h3 a:hover {
+    color: var(--color-accent);
+  }
+
+  .sitemap-category h3 span {
+    flex-shrink: 0;
+    min-width: 1.75rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(44, 108, 58, 0.1);
+    color: var(--color-accent);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-align: center;
+  }
+
+  .sitemap-empty {
+    margin: 0;
+    padding: 2rem;
+    text-align: center;
+    color: var(--color-heading-muted);
+    background: #fff;
+    border: 1px dashed var(--color-border);
+    border-radius: 12px;
+  }
+
+  .sitemap-block[hidden],
+  .sitemap-category[hidden],
+  li[hidden] {
+    display: none !important;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  const input = document.getElementById('sitemap-filter') as HTMLInputElement | null;
+  const countEl = document.querySelector('[data-sitemap-count]');
+  const emptyEl = document.querySelector('[data-sitemap-empty]') as HTMLElement | null;
+  const items = Array.from(document.querySelectorAll<HTMLElement>('[data-sitemap-item]'));
+  const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-sitemap-section]'));
+  const categories = Array.from(document.querySelectorAll<HTMLElement>('[data-sitemap-category]'));
+  const total = items.length;
+
+  function applyFilter() {
+    const query = (input?.value || '').trim().toLowerCase();
+
+    let visible = 0;
+    for (const item of items) {
+      const label = item.dataset.label || '';
+      const match = !query || label.includes(query);
+      item.hidden = !match;
+      if (match) visible += 1;
+    }
+
+    for (const category of categories) {
+      const hasVisible = category.querySelectorAll('[data-sitemap-item]:not([hidden])').length > 0;
+      category.hidden = !hasVisible;
+    }
+
+    for (const section of sections) {
+      const hasVisible = section.querySelectorAll('[data-sitemap-item]:not([hidden])').length > 0;
+      section.hidden = !hasVisible;
+    }
+
+    if (countEl) {
+      countEl.textContent = query ? `${visible} van ${total} links` : `${total} links`;
+    }
+
+    if (emptyEl) {
+      emptyEl.hidden = visible > 0;
+    }
+  }
+
+  input?.addEventListener('input', applyFilter);
+</script>

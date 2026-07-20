@@ -24,7 +24,7 @@ const posts = (await getCollection('blog')).sort(
       <div class="blog-grid">
         {posts.map((post, i) => (
           <div class="reveal" style={`transition-delay: ${i * 0.05}s`}>
-            <BlogCard entry={post} featured />
+            <BlogCard entry={post} />
           </div>
         ))}
       </div>
@@ -35,16 +35,6 @@ const posts = (await getCollection('blog')).sort(
 </BaseLayout>
 
 <style>
-  .page-hero {
-    background: var(--color-secondary);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .page-hero p {
-    font-size: clamp(1rem, 2vw, 1.125rem);
-    max-width: 36rem;
-  }
-
   .blog-grid {
     display: grid;
     grid-template-columns: 1fr;
