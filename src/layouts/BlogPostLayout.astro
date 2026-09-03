@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { resolveFeaturedImage } from '../lib/blogImages';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -16,7 +17,8 @@ function formatDate(date: Date): string {
   return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
 }
 
-const featuredImage = entry.data.featuredImage ?? '/images/blog/terras-tuin.jpg';
+const featuredImage =
+  resolveFeaturedImage(entry.data, entry.body) ?? '/images/blog/terras-tuin.jpg';
 const imageAlt = entry.data.imageAlt ?? entry.data.title;
 ---
 <BaseLayout title={entry.data.title} description={entry.data.description} image={featuredImage}>

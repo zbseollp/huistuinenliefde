@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { resolveFeaturedImage } from '../lib/blogImages';
 
 interface Props {
   entry: CollectionEntry<'blog'>;
@@ -36,7 +37,7 @@ function fallbackImageFor(slug: string): string {
 }
 
 const slug = entry.id;
-const image = entry.data.featuredImage || fallbackImageFor(slug);
+const image = resolveFeaturedImage(entry.data, entry.body) || fallbackImageFor(slug);
 const imageAlt = entry.data.imageAlt ?? entry.data.title;
 const postUrl = `/${slug}/`;
 ---
